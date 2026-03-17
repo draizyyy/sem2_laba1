@@ -343,62 +343,6 @@ Matrix* create_matrix(Element* massive, int row, int col) {
     return matrix;
 }
 
-// Matrix* fill_matrix() {
-//     int row, col;
-//     printf("Введите количество строк: ");
-//     if (scanf("%d", &row) != 1 || row <= 0) {
-//         printf("Ошибка: некорректное количество строк.\n");
-//         return NULL;
-//     }
-
-//     printf("Введите количество столбцов: ");
-//     if (scanf("%d", &col) != 1 || col <= 0) {
-//         printf("Ошибка: некорректное количество столбцов.\n");
-//         return NULL;
-//     }
-
-//     Element* massive = create_massive_size(row * col);
-    
-//     printf("Введите 1 если матрица целочисленная, 2 если с дробными числами: ");
-//     int value;
-//     scanf("%d", &value);
-//     switch (value) {
-//         case 1:
-//             for (int i = 0; i < row * col; i++) {
-//                 massive[i] = create_int_elem();
-//             }
-//             break;
-//         case 2:
-//             for (int i = 0; i < row * col; i++) {
-//                 massive[i] = create_float_elem();
-//             }
-//             break;
-//         default:
-//             printf("Неверный ввод, попробуйте ещё раз");
-//             return NULL;
-//     }
-
-
-//     Matrix* matrix = create_matrix(massive, row, col);
-
-//     printf("Введите матрицу:\n");
-
-//     // printf("%d ", matrix->row);
-//     // printf("%d", matrix->col);
-//     // printf("\n");
-//     for (int i = 0; i < matrix->row; i++) {
-//         for (int j = 0; j < matrix->col; j++) {
-//             // printf("%d ", i);
-//             // printf("%d", j);
-//             // printf("\n");
-//             int index = i * matrix->col + j;
-//             matrix->massive[index].type_info->scan(&matrix->massive[index]);
-//         }
-//     }
-
-//     return matrix;
-// }
-
 Matrix* fill_matrix() {
     int row, col;
     
@@ -463,52 +407,6 @@ Matrix* fill_matrix() {
     printf("========================================\n");
     return matrix;
 }
-
-// Matrix* fill_matrix_from_string(const char* input) {
-//     int row, col, type;
-//     int offset = 0, consumed = 0;
-    
-//     if (sscanf(input + offset, "%d %d %d%n", &row, &col, &type, &consumed) != 3) {
-//         printf("Ошибка: неверный формат.\n");
-//         return NULL;
-//     }
-//     offset += consumed;
-    
-//     if (row <= 0 || col <= 0 || (type != 1 && type != 2)) {
-//         printf("Ошибка: некорректные параметры.\n");
-//         return NULL;
-//     }
-    
-//     Element* massive = create_massive_size(row * col);
-//     for (int i = 0; i < row * col; i++) {
-//         massive[i] = (type == 1) ? create_int_elem() : create_float_elem();
-//     }
-    
-//     Matrix* matrix = create_matrix(massive, row, col);
-
-//     for (int i = 0; i < row * col; i++) {
-//         if (type == 1) {
-//             int val;
-//             if (sscanf(input + offset, "%d%n", &val, &consumed) != 1) {
-//                 printf("Ошибка: не хватает чисел.\n");
-//                 // destroy_matrix(matrix);
-//                 return NULL;
-//             }
-//             *(int*)matrix->massive[i].number = val;
-//         } else {
-//             float val;
-//             if (sscanf(input + offset, "%f%n", &val, &consumed) != 1) {
-//                 printf("Ошибка: не хватает чисел.\n");
-//                 // destroy_matrix(matrix);
-//                 return NULL;
-//             }
-//             *(float*)matrix->massive[i].number = val;
-//         }
-//         offset += consumed;
-//     }
-    
-//     return matrix;
-// }
 
 Matrix* fill_matrix_from_string(const char* input) {
     int row, col, type;
@@ -577,35 +475,6 @@ Matrix* sum_matrix(Matrix* matrix1, Matrix* matrix2) {
     return matrix;
 }
 
-// Matrix* mult_matrix(Matrix* matrix1, Matrix* matrix2) {
-//     if (matrix1->col != matrix2->row) {
-//         return NULL;
-//     }
-
-//     Element* massive = create_massive_size(matrix1->row * matrix2->col);
-
-//     for (int i = 0; i < matrix1->row * matrix2->col; i++) {
-//         massive[i] = matrix1->massive[0].type_info->create_null_elem();
-//     }
-    
-//     Matrix* matrix = create_matrix(massive, matrix1->row, matrix2->col);
-
-//     for (int i = 0; i < matrix1->row; i++) {
-//         for (int j = 0; j < matrix2->col; j++) {
-//             int index = i * matrix2->col + j;
-//             for (int k = 0; k < matrix1->col; k++) {
-//                 int index_left = k * matrix2->col + j;
-//                 int index_right = i * matrix1->col + k;
-
-//                 Element elem = matrix1->massive[0].type_info->multiply(&matrix1->massive[index_left], &matrix2->massive[index_right]);
-//                 Element old_elem = matrix->massive[index];
-//                 matrix->massive[index] = matrix1->massive[0].type_info->sum(&elem, &old_elem);
-//             } 
-//         }
-//     }
-
-//     return matrix;
-// }
 
 Matrix* mult_matrix(Matrix* matrix1, Matrix* matrix2) {
     if (matrix1->col != matrix2->row) {
@@ -657,69 +526,6 @@ Matrix* transponate_matrix(Matrix* matrix) {
     return new_matrix;
 }
 
-// Предполагается, что структура Matrix определена где-то выше
-// typedef struct { ... } Matrix;
-
-// void add_row_multiplied(Matrix* matrix) {
-//     int target_row_input, source_row_input;
-//     double coefficient;
-
-//     // --- 1. Ввод строки, которую изменяем ---
-//     while (1) {
-//         printf("Введите номер строки, которую нужно изменить (от 1 до %d): ", matrix->row);
-        
-//         // Проверка успешности ввода числа
-//         if (scanf("%d", &target_row_input) != 1) {
-//             printf("Ошибка: нужно ввести число!\n");
-//             while (getchar() != '\n'); // Очистка буфера ввода
-//             continue;
-//         }
-        
-//         // Проверка диапазона
-//         if (target_row_input >= 1 && target_row_input <= matrix->row) {
-//             break; // Ввод корректен
-//         }
-        
-//         printf("Ошибка: номер строки вне диапазона (1-%d)!\n", matrix->row);
-//         while (getchar() != '\n'); // Очистка буфера
-//     }
-
-//     // --- 2. Ввод строки, которую прибавляем ---
-//     while (1) {
-//         printf("Введите номер строки, которую нужно прибавить (от 1 до %d): ", matrix->row);
-        
-//         if (scanf("%d", &source_row_input) != 1) {
-//             printf("Ошибка: нужно ввести число!\n");
-//             while (getchar() != '\n');
-//             continue;
-//         }
-        
-//         if (source_row_input >= 1 && source_row_input <= matrix->row) {
-//             break;
-//         }
-        
-//         printf("Ошибка: номер строки вне диапазона (1-%d)!\n", matrix->row);
-//         while (getchar() != '\n');
-//     }
-
-//     // --- 3. Ввод коэффициента ---
-//     printf("Введите коэффициент умножения: ");
-//     scanf("%lf", &coefficient);
-    
-//     // Очистка буфера после ввода double (на случай если дальше будет ввод char/string)
-//     while (getchar() != '\n'); 
-
-//     // --- Подготовка индексов для работы с массивом (0-based) ---
-//     // Пользователь ввел 1..N, нам нужно 0..N-1
-//     int target_index = target_row_input - 1;
-//     int source_index = source_row_input - 1;
-
-//     printf("\nПараметры приняты:\n");
-//     printf("Изменяем строку #%d (индекс %d)\n", target_row_input, target_index);
-//     printf("Прибавляем строку #%d (индекс %d) * %lf\n", source_row_input, source_index, coefficient);
-
-//     // ... Дальше идет логика самого сложения строк ...
-// }
 
 Matrix* matrix_linear_combination(Matrix* matrix, int from_row, int to_row, Element coeff) {
     Element* massive = create_massive_size(matrix->row * matrix->col);
@@ -729,14 +535,6 @@ Matrix* matrix_linear_combination(Matrix* matrix, int from_row, int to_row, Elem
     }
     
     Matrix* new_matrix = create_matrix(massive, matrix->row, matrix->col);
-
-    // printf("Введите номер строки от 1 до %d, к которой хотите прибавить: ", matrix->row);
-    // scanf("%d", &to_row);
-    // printf("\nВведите номер строки от 1 до %d, которую хотите прибавить: ", matrix->row);
-    // scanf("%d", &from_row);
-    // printf("\nВведите коэффициент на который нужно умножить: ");
-    // matrix->massive[0].type_info->scan(&elem);
-    // printf("\n");
 
     to_row--, from_row--;
 
@@ -916,34 +714,6 @@ int test15() {
 }
 
 int start() {
-    // // while (1) {
-    // //     printf("Привет, ");
-    // // }
-    // const char* input1 = "3 3 2\n"
-    // "1 2 3\n"
-    // "4 5 6\n"
-    // "7 8 9\n";
-    // const char* input2 = "3 3 2\n"
-    // "2 3 2\n"
-    // "4 3 4\n"
-    // "2 3 2\n";
-
-    // Element elem = create_float_elem();
-    // *(float*)elem.number = 5.0;
-
-    // Matrix* matrix1 = fill_matrix();
-    // Matrix* matrix2 = fill_matrix();
-    // Matrix* matrix3 = sum_matrix(matrix1, matrix2);
-    // Matrix* matrix4 = mult_matrix(matrix1, matrix2);
-    // Matrix* matrix5 = transponate_matrix(matrix1);
-    // Matrix* matrix6 = matrix_linear_combination(matrix1, 3, 2, elem);
-
-    // print_matrix_equality(matrix1, matrix2, matrix3, "+");
-    // print_matrix_equality(matrix1, matrix2, matrix4, "x");
-    // print_matrix_transition(matrix1, matrix5);
-    // print_matrix_transition(matrix1, matrix6);
-
-    // return 0;
     int choice;
     
     do {
