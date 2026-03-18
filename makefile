@@ -41,7 +41,6 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-<<<<<<< HEAD
 # === ТЕСТЫ ===
 test: $(TEST_EXE)
 	@echo "=== Запуск тестов ==="
@@ -62,15 +61,3 @@ clean:
 	@echo "Готово!"
 
 rebuild: clean main
-=======
-main.o: main.c func.h massive.h
-func.o: func.c func.h
-massive.o: massive.c massive.h
-
-clean:
-	rm -f $(OBJS) $(TARGET)
-
-rebuild: clean all
-
-.PHONY: all clean rebuild
->>>>>>> 8dd5ba627c65a306108ea5a79fd4f8204b2dea7d
