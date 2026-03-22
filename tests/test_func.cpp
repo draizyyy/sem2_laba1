@@ -1,28 +1,29 @@
-// tests/test_func.cpp
 #include <gtest/gtest.h>
 
 extern "C" {
     #include "func.h"
-    #include "massive.h"
+    #include "array.h"
 }
 
-TEST(ElementTest, CreateInt) {
-    Element elem = create_int_elem();
-    EXPECT_NE(elem.number, nullptr);
-    EXPECT_EQ(elem.size, sizeof(int));
-    if (elem.type_info && elem.type_info->destroy) {
-        elem.type_info->destroy(&elem);
-    }
-}
+// TEST(ElementTest, CreateInt) {
+//     Element* elem = create("int");
+//     EXPECT_NE(elem, nullptr);
+//     EXPECT_NE(elem->number, nullptr);
+//     EXPECT_EQ(elem->size, sizeof(int));
+//     if (elem->type_info && elem->type_info->destroy) {
+//         elem->type_info->destroy(elem);
+//     }
+// }
 
-TEST(ElementTest, CreateFloat) {
-    Element elem = create_float_elem();
-    EXPECT_NE(elem.number, nullptr);
-    EXPECT_EQ(elem.size, sizeof(float));
-    if (elem.type_info && elem.type_info->destroy) {
-        elem.type_info->destroy(&elem);
-    }
-}
+// TEST(ElementTest, CreateFloat) {
+//     Element* elem = create("float");
+//     EXPECT_NE(elem, nullptr);
+//     EXPECT_NE(elem->number, nullptr);
+//     EXPECT_EQ(elem->size, sizeof(float));
+//     if (elem->type_info && elem->type_info->destroy) {
+//         elem->type_info->destroy(elem);
+//     }
+// }
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

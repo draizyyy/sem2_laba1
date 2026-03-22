@@ -12,13 +12,14 @@ GTEST_LIB = -LC:/libs/googletest/install/lib -lgtest -lgtest_main
 
 # === Основная программа ===
 TARGET = main.exe
-SRCS = main.c func.c massive.c
-OBJS = main.o func.o massive.o
+SRCS = main.c func.c array.c element.c matrix.c
+OBJS = main.o func.o array.o element.o matrix.o
 
 # === Тесты ===
 TEST_DIR = build_test
 TEST_EXE = $(TEST_DIR)/run_tests.exe
 TEST_SRC = tests/test_func.cpp
+TEST_OBJS = $(TEST_DIR)/test_func.o $(TEST_DIR)/func.o $(TEST_DIR)/array.o $(TEST_DIR)/element.o $(TEST_DIR)/matrix.o
 
 # === Цели ===
 .PHONY: all main test clean rebuild help
@@ -38,20 +39,34 @@ main: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+main.o: main.c func.h array.h element.h matrix.h
+	$(CC) $(CFLAGS) -c main.c -o main.o
+
+func.o: func.c func.h element.h matrix.h
+	$(CC) $(CFLAGS) -c func.c -o func.o
+
+array.o: array.c array.h func.h element.h matrix.h
+	$(CC) $(CFLAGS) -c array.c -o array.o
+
+element.o: element.c element.h
+	$(CC) $(CFLAGS) -c element.c -o element.o
+
+matrix.o: matrix.c matrix.h
+	$(CC) $(CFLAGS) -c matrix.c -o matrix.o
 
 # === ТЕСТЫ ===
 test: $(TEST_EXE)
 	@echo "=== Запуск тестов ==="
 	./$(TEST_EXE)
 
-$(TEST_EXE): $(TEST_SRC) func.c massive.c func.h massive.h
+$(TEST_EXE): $(TEST_SRC) func.c array.c element.c matrix.c func.h array.h element.h matrix.h
 	mkdir -p $(TEST_DIR)
 	$(CXX) $(CXXFLAGS) $(GTEST_INC) -c $(TEST_SRC) -o $(TEST_DIR)/test_func.o
 	$(CC) $(CFLAGS) -c func.c -o $(TEST_DIR)/func.o
-	$(CC) $(CFLAGS) -c massive.c -o $(TEST_DIR)/massive.o
-	$(CXX) $(CXXFLAGS) $(GTEST_INC) -o $@ $(TEST_DIR)/test_func.o $(TEST_DIR)/func.o $(TEST_DIR)/massive.o $(GTEST_LIB)
+	$(CC) $(CFLAGS) -c array.c -o $(TEST_DIR)/array.o
+	$(CC) $(CFLAGS) -c element.c -o $(TEST_DIR)/element.o
+	$(CC) $(CFLAGS) -c matrix.c -o $(TEST_DIR)/matrix.o
+	$(CXX) $(CXXFLAGS) $(GTEST_INC) -o $@ $(TEST_OBJS) $(GTEST_LIB)
 
 # === ОЧИСТКА ===
 clean:
@@ -60,4 +75,4 @@ clean:
 	rm -rf $(TEST_DIR)
 	@echo "Готово!"
 
-rebuild: clean main
+rebuild: clean all
