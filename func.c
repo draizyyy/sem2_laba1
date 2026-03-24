@@ -261,6 +261,42 @@ const char* format_matrix(int rows, int cols, int type, const char* matrix_data)
     return (const char*)result;
 }
 
+Matrix* fill_matrix_w_predicted_value(ElementType type) {
+    int row, col;
+    
+    printf("\n========================================\n");
+    printf("         ВВОД НОВОЙ МАТРИЦЫ             \n");
+    printf("========================================\n");
+
+    printf("Количество строк: ");
+    if (scanf("%d", &row) != 1 || row <= 0) {
+        printf("Ошибка: некорректное количество строк.\n");
+        return NULL;
+    }
+    
+    printf("Количество столбцов: ");
+    if (scanf("%d", &col) != 1 || col <= 0) {
+        printf("Ошибка: некорректное количество столбцов.\n");
+        return NULL;
+    }
+    
+    // printf("----------------------------------------\n");
+    // printf("Введите элементы матрицы (по порядку):\n");
+    // printf("----------------------------------------\n");   
+
+    int value;
+    if (type == TYPE_INT) {
+        value = 1;
+    } else if (type == TYPE_FLOAT) {
+        value = 2;
+    } else {
+        return NULL;
+    }
+
+    printf("========================================\n");
+    return string_to_matrix(format_matrix(row, col, value, get_string_from_user()));
+}
+
 Matrix* fill_matrix() {
     int row, col;
     
@@ -291,9 +327,9 @@ Matrix* fill_matrix() {
     int value;
     scanf("%d", &value);
     
-    printf("----------------------------------------\n");
-    printf("Введите элементы матрицы (по порядку):\n");
-    printf("----------------------------------------\n");   
+    // printf("----------------------------------------\n");
+    // printf("Введите элементы матрицы (по порядку):\n");
+    // printf("----------------------------------------\n");   
 
     printf("========================================\n");
     return string_to_matrix(format_matrix(row, col, value, get_string_from_user()));
@@ -326,7 +362,7 @@ int start() {
                 // printf("Введите первую матрицу:\n");
                 Matrix* m1 = fill_matrix();
                 // printf("Введите вторую матрицу:\n");
-                Matrix* m2 = fill_matrix();
+                Matrix* m2 = fill_matrix_w_predicted_value(get_array_type(get_array(m1)));
 
                 Matrix* res = sum_matrix(m1, m2);
 
@@ -345,7 +381,7 @@ int start() {
                 // printf("Введите первую матрицу:\n");
                 Matrix* m1 = fill_matrix();
                 // printf("Введите вторую матрицу:\n");
-                Matrix* m2 = fill_matrix();
+                Matrix* m2 = fill_matrix_w_predicted_value(get_array_type(get_array(m1)));
                 
                 Matrix* res = mult_matrix(m1, m2);
                 print_matrix_equality(m1, m2, res, "x");

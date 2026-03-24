@@ -28,8 +28,4 @@ int set_element_by_index(Array* array, int index, Element* elem);
 int destroy_array(Array* array);
 ElementType get_array_type(Array* array);
 
-// Array *create_array_matrix();
-// Array *create_array_size_matrix(int size);
-// int add_matrix_to_array(Array* array, Matrix* matrix);
-
 #endif

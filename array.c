@@ -11,12 +11,6 @@ const TypeArray ElementArray = {
     .destroy = destroy_array
 };
 
-// const TypeArray MatrixArray = {
-//     .create = create_array_matrix,
-//     .create_size = create_array_size_matrix,
-//     .add = add_matrix_to_array
-// };
-
 Array* create_array_element() {
     Array* array = malloc(sizeof(Array));
     Element *start = malloc(sizeof(Element));
@@ -66,30 +60,6 @@ int init_float_array(Array* array) {
     return 1;
 }
 
-// Array* add_element_to_array(Array* array, Element* elem) {
-//     Array *new_ptr;
-
-//     // сделать структуру гду будет массив и интерфейс для управления им. Проверки
-//     // максимум баллов за библу для интерфейса
-
-//     // сделать вот такую штуку чтобы вызывать сразу print(elem)
-    
-//     new_ptr = realloc(array->data, sizeof(Element) * (array->size+1));
-//     if (new_ptr == NULL) {
-//         return 0;
-//     }
-
-//     int index = array->size;
-
-//     new_ptr[index].number = malloc(sizeof(new_ptr[index].type_info));
-
-//     if (new_ptr[index].number == NULL) {
-//         return 0;
-//     }
-//     array->size++;
-//     return new_ptr;
-// }
-
 int add_element_to_array(Array* array, Element* element) {
     Element *new_ptr;
 
@@ -132,53 +102,4 @@ int destroy_array(Array* array) {
     }
     return 1;
 }
-
-// Array* create_array_matrix() {
-//     Array* array = malloc(sizeof(Array));
-//     Matrix *start = malloc(sizeof(Matrix));
-
-//     if (start == NULL) {
-//         return NULL;
-//     }
-
-//     array->data = start;
-//     array->size = 0;
-
-//     return start;
-// }
-
-// Array* create_array_size_matrix(int size) {
-//     Element *start = malloc(sizeof(Element) * size);
-
-//     if (start == NULL) {
-//         return NULL;
-//     }
-
-//     return start;
-// }
-
-// int add_matrix_to_array(Array* array, Matrix* matrix) {
-//     Matrix *new_ptr;
-
-//     // сделать структуру гду будет массив и интерфейс для управления им. Проверки
-//     // максимум баллов за библу для интерфейса
-
-//     // сделать вот такую штуку чтобы вызывать сразу print(elem)
-    
-//     new_ptr = realloc(array->data, sizeof(Matrix) * (array->size+1));
-//     if (new_ptr == NULL) {
-//         return 0;
-//     }
-
-//     int index = array->size;
-
-//     new_ptr[index].number = malloc(sizeof(new_ptr[index].type_info));
-//     new_ptr
-
-//     if (new_ptr[index].number == NULL) {
-//         return 0;
-//     }
-//     array->size++;
-//     return new_ptr;
-// }
 

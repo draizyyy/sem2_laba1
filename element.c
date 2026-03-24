@@ -95,21 +95,35 @@ int compare_float(const Element* element1, const Element* element2) {
     return 0;
 }
 
+// int destroy_elem(Element* elem) {
+//     if (elem == NULL) {
+//         return 0;
+//     }
+
+//     // if (elem->type_element != NULL) {
+//     //     free(elem->type_element);
+//     //     elem->type_element = NULL;
+//     // }
+
+//     if (elem->number != NULL) {
+//         free(elem->number);
+//         elem->number = NULL;
+//     }
+
+//     free(elem);
+
+//     return 1;
+// }
+
 int destroy_elem(Element* elem) {
     if (elem == NULL) {
-        return 0;
+        return 0; 
     }
-
-    // if (elem->type_element != NULL) {
-    //     free(elem->type_element);
-    //     elem->type_element = NULL;
-    // }
 
     if (elem->number != NULL) {
         free(elem->number);
-        elem->number = NULL;
+        elem->number = NULL; 
     }
-
     free(elem);
 
     return 1;

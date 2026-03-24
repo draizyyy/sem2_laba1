@@ -24,9 +24,24 @@ Matrix* create_matrix(Array* array, int row, int col) {
     return matrix;
 }
 
+// int destroy_matrix(Matrix* matrix) {
+//     return 1;
+// }
+
 int destroy_matrix(Matrix* matrix) {
+    if (matrix == NULL) {
+        return 0;
+    }
+
+    if (matrix->array != NULL) {
+        destroy_array(matrix->array);
+        matrix->array = NULL;  
+    }
+    free(matrix);
+
     return 1;
 }
+
 
 int get_rows(Matrix* matrix) {
     return matrix->row;
@@ -73,7 +88,6 @@ Matrix* fill_matrix_from_string(const char* input) {
     int offset = 0, consumed = 0;
     char* endptr;
 
-    // 1. Парсинг заголовка
     if (sscanf(input, "%d %d %d%n", &row, &col, &type, &consumed) != 3) {
         printf("Ошибка: неверный формат заголовка.\n");
         return NULL;
@@ -85,9 +99,8 @@ Matrix* fill_matrix_from_string(const char* input) {
         return NULL;
     }
 
-    // 2. Создание структуры
     Array* array = create_array_size_element(row * col);
-    if (!array) return NULL; // Проверка на успех создания
+    if (!array) return NULL; 
 
     for (int i = 0; i < row * col; i++) {
         set_element_by_index(array, i, ((type == 1) ? create("int") : create("float")));
@@ -95,31 +108,29 @@ Matrix* fill_matrix_from_string(const char* input) {
 
     Matrix* matrix = create_matrix(array, row, col);
     if (!matrix) {
-        destroy_array(array); // Очистка при ошибке
+        destroy_array(array); 
         return NULL;
     }
 
-    // 3. Парсинг данных (более надежный способ)
     for (int i = 0; i < row * col; i++) {
-        // Пропускаем лишние пробелы вручную для надежности
         while (input[offset] == ' ' || input[offset] == '\n' || input[offset] == '\t') {
             offset++;
         }
 
         if (type == 1) {
             long val = strtol(input + offset, &endptr, 10);
-            if (endptr == input + offset) { // Если ничего не распарсилось
+            if (endptr == input + offset) {
                 printf("Ошибка: ожидалось число (int) на позиции %d.\n", i);
-                destroy_matrix(matrix); // Важная очистка!
+                destroy_matrix(matrix);
                 return NULL;
             }
             set_int_number(get_element_by_index(get_array(matrix), i), (int)val);
-            offset = endptr - input; // Обновляем смещение
+            offset = endptr - input; 
         } else {
             float val = strtof(input + offset, &endptr);
             if (endptr == input + offset) {
                 printf("Ошибка: ожидалось число (float) на позиции %d.\n", i);
-                destroy_matrix(matrix); // Важная очистка!
+                destroy_matrix(matrix); 
                 return NULL;
             }
             set_float_number(get_element_by_index(get_array(matrix), i), val);
@@ -131,7 +142,7 @@ Matrix* fill_matrix_from_string(const char* input) {
 }
 
 Matrix* sum_matrix(Matrix* matrix1, Matrix* matrix2) {
-    if ((get_cols(matrix1) != get_cols(matrix2)) || (get_rows(matrix1) != get_rows(matrix2))) {
+    if ((get_cols(matrix1) != get_cols(matrix2)) || (get_rows(matrix1) != get_rows(matrix2)) || (get_array_type(get_array(matrix1)) != get_array_type(get_array(matrix2)))) {
         return NULL;
     }
 
@@ -139,7 +150,6 @@ Matrix* sum_matrix(Matrix* matrix1, Matrix* matrix2) {
 
     for (int i = 0; i < get_rows(matrix1) * get_cols(matrix1); i++) {
         if (get_array_type(get_array(matrix1)) == TYPE_INT) {
-            // printf("%d\n", set_element_by_index(array, i, create_null("int")));
             set_element_by_index(array, i, create_null("int"));
         }
         else if (get_array_type(get_array(matrix1)) == TYPE_FLOAT) {
@@ -163,7 +173,7 @@ Matrix* sum_matrix(Matrix* matrix1, Matrix* matrix2) {
 
 
 Matrix* mult_matrix(Matrix* matrix1, Matrix* matrix2) {
-    if (get_cols(matrix1) != get_rows(matrix2)) {
+    if (get_cols(matrix1) != get_rows(matrix2) || (get_array_type(get_array(matrix1)) != get_array_type(get_array(matrix2)))) {
         return NULL;
     }
 
@@ -270,9 +280,5 @@ Array* get_array(Matrix* matrix) {
 }
 
 Matrix* string_to_matrix(const char* str) {
-    // Matrix* m = create_matrix(create_array_size_element(1), 1, 1);
-    // printf("я туточки");
-    // return m->type_matrix->scan(str);
-
     return fill_matrix_from_string(str);
 }
