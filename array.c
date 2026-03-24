@@ -118,6 +118,7 @@ Element* get_element_by_index(Array* array, int index) {
 int set_element_by_index(Array* array, int index, Element* elem) {
     if ((unsigned) index < array->size) {
         array->data[index] = *elem;
+        // free(elem);
         return 1;
     }
     return 0;

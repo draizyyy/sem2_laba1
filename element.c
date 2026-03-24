@@ -124,7 +124,7 @@ Element* create_int_elem() {
     elem->number = malloc(elem->size);
     
     if (elem->number == NULL) {
-        return elem;
+        return NULL;
     }
 
     return elem;
@@ -138,7 +138,7 @@ Element* create_float_elem() {
 
     elem->number = malloc(elem->size);
     if (elem->number == NULL) {
-        return elem;
+        return NULL;
     }
 
     return elem;
@@ -148,6 +148,7 @@ Element* create_null_elem_int() {
     Element* elem = malloc(sizeof(Element));
     elem->size = sizeof(int);
     elem->type_element = &IntType;
+    elem->type = TYPE_INT;
 
     elem->number = malloc(elem->size);
     if (elem->number == NULL) {
@@ -163,6 +164,7 @@ Element* create_null_elem_float() {
     Element* elem = malloc(sizeof(Element));
     elem->size = sizeof(float);
     elem->type_element = &FloatType;
+    elem->type = TYPE_FLOAT;
 
     elem->number = malloc(elem->size);
     if (elem->number == NULL) {
@@ -218,10 +220,10 @@ int get_int_number(Element* elem) {
     }
     
     if (elem->type == TYPE_INT) {
-        elem->type_element->get_number(elem);
+        return *(int*)elem->type_element->get_number(elem);
     }
     
-    return *(int*)elem->type_element->get_number(elem);
+    return 0;
 }
 
 float get_float_number(Element* elem) {
@@ -230,10 +232,10 @@ float get_float_number(Element* elem) {
     }
     
     if (elem->type == TYPE_FLOAT) {
-        elem->type_element->get_number(elem);
+        return *(float*)elem->type_element->get_number(elem);
     }
     
-    return *(float*)elem->type_element->get_number(elem);
+    return 0;
 }
 
 ElementType get_elem_type(Element* elem) {
@@ -278,9 +280,9 @@ Element* create(char* type) {
 
 Element* create_null(char* type) {
     if (strcmp(type, "int") == 0) {
-        return create_null("int");
+        return create_null_elem_int();
     } else if (strcmp(type, "float") == 0) {
-        return create_null("float");
+        return create_null_elem_float();
     } else {
         return NULL;  
     }
