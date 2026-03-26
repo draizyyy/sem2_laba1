@@ -1,24 +1,11 @@
 #ifndef FUNC_H
 #define FUNC_H
 
-
-
-// int test1();
-// int test2();
-// int test3();
-// int test4();
-// int test5();
-// int test5();
-// int test6();
-// int test7();
-// int test8();
-// int test9();
-// int test10();
-// int test11();
-// int test12();
-// int test13();
-// int test14();
-// int test15();
+void clear_buffer(void);
+int read_int(const char* input, int* output);
+const char* format_matrix(int rows, int cols, int type, const char* matrix_data);
+int max(int num1, int num2);
+int min(int num1, int num2);
 
 int start();
 

@@ -95,11 +95,22 @@ int set_element_by_index(Array* array, int index, Element* elem) {
 }
 
 int destroy_array(Array* array) {
-    for (unsigned int i = 0; i < array->size; i++) {
-        if(destroy(get_element_by_index(array, i)) != 1) {
-            return 0;
-        }
+    if (array == NULL) {
+        return 0;
     }
+
+    if (array->data != NULL && array->size > 0) {
+        for (unsigned int i = 0; i < array->size; i++) {
+            if (array->data[i].number != NULL) {
+                free(array->data[i].number);
+                array->data[i].number = NULL;
+            }
+        }
+        free(array->data);
+        array->data = NULL;
+    }
+
+    free(array);
     return 1;
 }
 

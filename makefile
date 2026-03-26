@@ -8,7 +8,8 @@ CXXFLAGS = -Wall -Wextra -g -std=c++17 -I.
 
 # === Пути к Google Test ===
 GTEST_INC = -IC:/libs/googletest/install/include
-GTEST_LIB = -LC:/libs/googletest/install/lib -lgtest -lgtest_main
+# Добавлен -pthread (обязательно для gtest) и -lm (математика)
+GTEST_LIB = -LC:/libs/googletest/install/lib -lgtest -lgtest_main -pthread -lm
 
 # === Основная программа ===
 TARGET = main.exe
@@ -18,7 +19,6 @@ OBJS = main.o func.o array.o element.o matrix.o
 # === Тесты ===
 TEST_DIR = build_test
 TEST_EXE = $(TEST_DIR)/run_tests.exe
-TEST_SRC = tests/test_func.cpp
 TEST_OBJS = $(TEST_DIR)/test_func.o $(TEST_DIR)/func.o $(TEST_DIR)/array.o $(TEST_DIR)/element.o $(TEST_DIR)/matrix.o
 
 # === Цели ===
@@ -45,7 +45,7 @@ main.o: main.c func.h array.h element.h matrix.h
 func.o: func.c func.h element.h matrix.h
 	$(CC) $(CFLAGS) -c func.c -o func.o
 
-array.o: array.c array.h func.h element.h matrix.h
+array.o: array.c array.h element.h matrix.h
 	$(CC) $(CFLAGS) -c array.c -o array.o
 
 element.o: element.c element.h
@@ -57,16 +57,28 @@ matrix.o: matrix.c matrix.h
 # === ТЕСТЫ ===
 test: $(TEST_EXE)
 	@echo "=== Запуск тестов ==="
-	./$(TEST_EXE)
+	$(TEST_EXE)
 
-$(TEST_EXE): $(TEST_SRC) func.c array.c element.c matrix.c func.h array.h element.h matrix.h
+$(TEST_EXE): $(TEST_DIR)/test_func.o $(TEST_DIR)/func.o $(TEST_DIR)/array.o $(TEST_DIR)/element.o $(TEST_DIR)/matrix.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(GTEST_LIB)
+
+$(TEST_DIR)/test_func.o: tests/test_func.cpp | $(TEST_DIR)
+	$(CXX) $(CXXFLAGS) $(GTEST_INC) -c $< -o $@
+
+$(TEST_DIR)/func.o: func.c | $(TEST_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(TEST_DIR)/array.o: array.c | $(TEST_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(TEST_DIR)/element.o: element.c | $(TEST_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(TEST_DIR)/matrix.o: matrix.c | $(TEST_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(TEST_DIR):
 	mkdir -p $(TEST_DIR)
-	$(CXX) $(CXXFLAGS) $(GTEST_INC) -c $(TEST_SRC) -o $(TEST_DIR)/test_func.o
-	$(CC) $(CFLAGS) -c func.c -o $(TEST_DIR)/func.o
-	$(CC) $(CFLAGS) -c array.c -o $(TEST_DIR)/array.o
-	$(CC) $(CFLAGS) -c element.c -o $(TEST_DIR)/element.o
-	$(CC) $(CFLAGS) -c matrix.c -o $(TEST_DIR)/matrix.o
-	$(CXX) $(CXXFLAGS) $(GTEST_INC) -o $@ $(TEST_OBJS) $(GTEST_LIB)
 
 # === ОЧИСТКА ===
 clean:

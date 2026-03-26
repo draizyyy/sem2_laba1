@@ -7,202 +7,28 @@
 
 #define WIDTH 6
 
-
-// int scan_int(const Element* element) {
-//     scanf("%d", (int*)element->number);
-//     return 0;
-// }
-
-// int scan_float(const Element* element) {
-//     scanf("%g", (float*)element->number);
-//     return 0;
-// }
-
-
-
 int max(int num1, int num2) {
-    if (num1 > num2) {
-        return num1;
-    }
-    return num2;
+    return (num1 > num2) ? num1 : num2;
 }
 
 int min(int num1, int num2) {
-    if (num1 < num2) {
-        return num1;
-    }
-    return num2;
+    return (num1 < num2) ? num1 : num2;
 }
 
-// void print_matrix(const Matrix* matrix) {
-//     const Element *elem;
-//     printf("\n");
-//     for (int i = 0; i < matrix->row; i++) {
-//         printf("│");
-//         for (int j = 0; j < matrix->col; j++) {
-//             if (j != 0) { printf(" "); }
-//             int index = i * matrix->col + j;
-//             elem = &matrix->massive[index];
-//             print(elem);
-//         }
-//         printf("│\n");
-//     }
-// }
-
-
-
-void print_matrix_equality(Matrix* matrix1, Matrix* matrix2, Matrix* matrix3, char* sign) {
-    const Element *elem;
-    int fl = min(min(get_rows(matrix1), get_rows(matrix2)), get_rows(matrix3)) / 2;
-    for (int i = 0; i < max(max(get_rows(matrix1), get_rows(matrix2)), get_rows(matrix3)); i++) {
-        if (i < get_rows(matrix1)) {
-            printf("│ ");
-            for (int j = 0; j < get_cols(matrix1); j++) {
-                if (j != 0) {
-                    printf(" ");
-                }
-                int index1 = i * get_cols(matrix1) + j;
-                
-                elem = get_element_by_index(get_array(matrix1), index1);
-                printf("%s", print(elem));
-            } 
-            printf("│");
-        } else {
-            for (int j = 0; j < get_cols(matrix1); j++) {
-                for (int k = 0; k < WIDTH; k++) {
-                    printf(" ");
-                }   
-            }
-        }   
-        printf("\t");
-        
-        
-        if (i == fl) {
-            printf("%s", sign);
-        }
-
-        if (i < get_rows(matrix2)) {
-            printf("\t│ ");
-            for (int j = 0; j < get_cols(matrix2); j++) {
-                if (j != 0) {
-                    printf(" ");
-                }
-                int index2 = i * get_cols(matrix2) + j;
-                
-                elem = get_element_by_index(get_array(matrix2), index2);
-                // elem = &matrix2->massive[index2];
-                printf("%s", print(elem));
-            } 
-            printf("│");
-        } else {
-            for (int j = 0; j < get_cols(matrix2); j++) {
-                for (int k = 0; k < WIDTH; k++) {
-                    printf(" ");
-                }   
-            }
-            printf("\t");
-        }   
-        printf("\t");
-
-        
-
-        if (i == fl) {
-            printf("=");
-        }
-
-        printf("\t");
-        if (i < get_rows(matrix3)) {
-            printf("│ ");
-            for (int j = 0; j < get_cols(matrix3); j++) {
-                if (j != 0) {
-                    printf(" ");
-                }
-                int index3 = i * get_cols(matrix3) + j;
-
-                elem = get_element_by_index(get_array(matrix3), index3);
-                printf("%s", print(elem));            
-            } 
-            printf("│");
-        } else {
-            for (int j = 0; j < get_cols(matrix3); j++) {
-                for (int k = 0; k < WIDTH; k++) {
-                    printf(" ");
-                }   
-            }
-        }   
-        printf("\n");
-    }
+void clear_buffer(void) {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
 }
 
-void print_matrix_transition(Matrix* matrix1, Matrix* matrix2) {
-    const Element *elem;
-    printf("\n");
-    int fl = max(get_rows(matrix1), get_rows(matrix2)) / 2;
-    for (int i = 0; i < max(get_rows(matrix1), get_rows(matrix2)); i++) {
-        if (i < get_rows(matrix1)) {
-            printf("│ ");
-            for (int j = 0; j < get_cols(matrix1); j++) {
-                if (j != 0) {
-                    printf(" ");
-                }
-                int index1 = i * get_cols(matrix1) + j;
-                
-                elem = get_element_by_index(get_array(matrix1), index1);
-                printf("%s", print(elem));
-            } 
-            printf("│");
-        } else {
-            for (int j = 0; j < get_cols(matrix1); j++) {
-                for (int k = 0; k < WIDTH; k++) {
-                    printf(" ");
-                }   
-            }
-        }   
-        
-        printf("\t");
-        
-        if (i == fl) {
-            printf("%s", "->");
-        }
-
-        printf("\t ");
-
-        if (i < get_rows(matrix2)) {
-            printf("│ ");
-            for (int j = 0; j < get_cols(matrix2); j++) {
-                if (j != 0) {
-                    printf(" ");
-                }
-                int index2 = i * get_cols(matrix2) + j;
-
-                elem = get_element_by_index(get_array(matrix2), index2);
-                printf("%s", print(elem));
-            } 
-            printf("│");
-        } else {
-            printf(" ");
-        }   
-        printf("\n");
+int read_int(const char* input, int* output) {
+    printf("%s", input);
+    if (scanf("%d", output) != 1) {
+        clear_buffer();
+        return 0;
     }
+    clear_buffer();
+    return 1;
 }
-
-// char* get_string_from_user() {
-//     static char buffer[1024]; // static, чтобы вернуть указатель на данные
-    
-//     // Очищаем буфер ввода от лишнего мусора (например, оставшегося \n)
-//     int c;
-//     while ((c = getchar()) != '\n' && c != EOF);
-
-//     if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
-//         // Убираем конечный \n, если он есть
-//         size_t len = strlen(buffer);
-//         if (len > 0 && buffer[len-1] == '\n') {
-//             buffer[len-1] = '\0';
-//         }
-//         return buffer;
-//     }
-//     return NULL;
-// }
 
 char* get_string_from_user() {
     static char buffer[1024];
@@ -210,9 +36,6 @@ char* get_string_from_user() {
     
     buffer[0] = '\0';  
     size_t total_len = 0;
-    
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
     
     printf("Вводите числа (пустая строка для завершения):\n");
     
@@ -237,7 +60,7 @@ char* get_string_from_user() {
             strcpy(buffer + total_len, line);
             total_len += line_len;
         } else {
-            fprintf(stderr, "Превышен лимит буфера (1024 символа)\n");
+            fprintf(stderr, "Превышен лимит буфера\n");
             break;
         }
     }
@@ -246,10 +69,11 @@ char* get_string_from_user() {
 }
 
 const char* format_matrix(int rows, int cols, int type, const char* matrix_data) {
+    if (matrix_data == NULL) return NULL;
+    
     size_t header_size = 50; 
     size_t data_size = strlen(matrix_data);
-    size_t total_size = header_size + data_size + 1;
-    
+    size_t total_size = header_size + data_size + 2;
     
     char* result = (char*)malloc(total_size);
     if (result == NULL) {
@@ -257,32 +81,34 @@ const char* format_matrix(int rows, int cols, int type, const char* matrix_data)
     }
 
     sprintf(result, "%d %d %d\n%s", rows, cols, type, matrix_data);
-
     return (const char*)result;
 }
 
-Matrix* fill_matrix_w_predicted_value(ElementType type) {
+// Исправленная версия: теперь принимает ожидаемые размеры
+Matrix* fill_matrix_w_predicted_value(ElementType type, int expected_rows, int expected_cols) {
     int row, col;
     
     printf("\n========================================\n");
     printf("         ВВОД НОВОЙ МАТРИЦЫ             \n");
     printf("========================================\n");
+    printf("Ожидаемый размер: %d x %d\n", expected_rows, expected_cols);
 
-    printf("Количество строк: ");
-    if (scanf("%d", &row) != 1 || row <= 0) {
+    // Читаем размеры, но проверяем на совпадение
+    if (!read_int("Количество строк: ", &row) || row <= 0) {
         printf("Ошибка: некорректное количество строк.\n");
         return NULL;
     }
     
-    printf("Количество столбцов: ");
-    if (scanf("%d", &col) != 1 || col <= 0) {
+    if (!read_int("Количество столбцов: ", &col) || col <= 0) {
         printf("Ошибка: некорректное количество столбцов.\n");
         return NULL;
     }
-    
-    // printf("----------------------------------------\n");
-    // printf("Введите элементы матрицы (по порядку):\n");
-    // printf("----------------------------------------\n");   
+
+    // Проверка размеров
+    if (row != expected_rows || col != expected_cols) {
+        printf("Ошибка: размеры матрицы должны быть %d x %d.\n", expected_rows, expected_cols);
+        return NULL;
+    }
 
     int value;
     if (type == TYPE_INT) {
@@ -290,49 +116,214 @@ Matrix* fill_matrix_w_predicted_value(ElementType type) {
     } else if (type == TYPE_FLOAT) {
         value = 2;
     } else {
+        printf("Ошибка: неизвестный тип элементов.\n");
         return NULL;
     }
 
     printf("========================================\n");
-    return string_to_matrix(format_matrix(row, col, value, get_string_from_user()));
+    
+    char* data = get_string_from_user();
+    if (data == NULL) {
+        printf("Ошибка ввода данных.\n");
+        return NULL;
+    }
+    
+    const char* formatted = format_matrix(row, col, value, data);
+    if (formatted == NULL) {
+        printf("Ошибка форматирования.\n");
+        return NULL;
+    }
+    
+    Matrix* result = string_to_matrix(formatted);
+    free((void*)formatted);
+    
+    if (result == NULL) {
+        printf("Ошибка парсинга матрицы.\n");
+        return NULL;
+    }
+    
+    return result;
 }
 
 Matrix* fill_matrix() {
-    int row, col;
+    int row, col, type_choice;
     
     printf("\n========================================\n");
     printf("         ВВОД НОВОЙ МАТРИЦЫ             \n");
     printf("========================================\n");
 
-    printf("Количество строк: ");
-    if (scanf("%d", &row) != 1 || row <= 0) {
+    if (!read_int("Количество строк: ", &row) || row <= 0) {
         printf("Ошибка: некорректное количество строк.\n");
         return NULL;
     }
     
-    printf("Количество столбцов: ");
-    if (scanf("%d", &col) != 1 || col <= 0) {
+    if (!read_int("Количество столбцов: ", &col) || col <= 0) {
         printf("Ошибка: некорректное количество столбцов.\n");
         return NULL;
     }
     
-    printf("\n");
-    printf("----------------------------------------\n");
+    printf("\n----------------------------------------\n");
     printf("Тип элементов матрицы:\n");
     printf("  1 — целые числа (int)\n");
     printf("  2 — вещественные числа (float)\n");
     printf("----------------------------------------\n");
-    printf("Ваш выбор: ");
+    
+    if (!read_int("Ваш выбор: ", &type_choice)) {
+        printf("Ошибка ввода типа.\n");
+        return NULL;
+    }
     
     int value;
-    scanf("%d", &value);
-    
-    // printf("----------------------------------------\n");
-    // printf("Введите элементы матрицы (по порядку):\n");
-    // printf("----------------------------------------\n");   
+    if (type_choice == 1) {
+        value = 1;
+    } else if (type_choice == 2) {
+        value = 2;
+    } else {
+        printf("Неверный выбор типа.\n");
+        return NULL;
+    }
 
     printf("========================================\n");
-    return string_to_matrix(format_matrix(row, col, value, get_string_from_user()));
+    
+    char* data = get_string_from_user();
+    if (data == NULL) {
+        printf("Ошибка ввода данных.\n");
+        return NULL;
+    }
+    
+    const char* formatted = format_matrix(row, col, value, data);
+    if (formatted == NULL) {
+        printf("Ошибка форматирования.\n");
+        return NULL;
+    }
+    
+    Matrix* result = string_to_matrix(formatted);
+    free((void*)formatted);
+    
+    if (result == NULL) {
+        printf("Ошибка парсинга матрицы.\n");
+        return NULL;
+    }
+    
+    return result;
+}
+
+void print_matrix_equality(Matrix* matrix1, Matrix* matrix2, Matrix* matrix3, char* sign) {
+    if (!matrix1 || !matrix2 || !matrix3) return;
+    
+    const Element *elem;
+    int fl = min(min(get_rows(matrix1), get_rows(matrix2)), get_rows(matrix3)) / 2;
+    
+    for (int i = 0; i < max(max(get_rows(matrix1), get_rows(matrix2)), get_rows(matrix3)); i++) {
+        if (i < get_rows(matrix1)) {
+            printf("│ ");
+            for (int j = 0; j < get_cols(matrix1); j++) {
+                if (j != 0) printf(" ");
+                int index1 = i * get_cols(matrix1) + j;
+                elem = get_element_by_index(get_array(matrix1), index1);
+                if (elem) {
+                    char* str = print(elem);
+                    if (str) { printf("%s", str); free(str); }
+                }
+            } 
+            printf("│");
+        } else {
+            for (int j = 0; j < get_cols(matrix1); j++) {
+                for (int k = 0; k < WIDTH; k++) printf(" ");
+            }
+        }   
+        printf("\t");
+        
+        if (i == fl) printf("%s", sign);
+
+        if (i < get_rows(matrix2)) {
+            printf("\t│ ");
+            for (int j = 0; j < get_cols(matrix2); j++) {
+                if (j != 0) printf(" ");
+                int index2 = i * get_cols(matrix2) + j;
+                elem = get_element_by_index(get_array(matrix2), index2);
+                if (elem) {
+                    char* str = print(elem);
+                    if (str) { printf("%s", str); free(str); }
+                }
+            } 
+            printf("│");
+        } else {
+            for (int j = 0; j < get_cols(matrix2); j++) {
+                for (int k = 0; k < WIDTH; k++) printf(" ");
+            }
+            printf("\t");
+        }   
+        printf("\t");
+
+        if (i == fl) printf("=");
+        printf("\t");
+        
+        if (i < get_rows(matrix3)) {
+            printf("│ ");
+            for (int j = 0; j < get_cols(matrix3); j++) {
+                if (j != 0) printf(" ");
+                int index3 = i * get_cols(matrix3) + j;
+                elem = get_element_by_index(get_array(matrix3), index3);
+                if (elem) {
+                    char* str = print(elem);
+                    if (str) { printf("%s", str); free(str); }
+                }
+            } 
+            printf("│");
+        } else {
+            for (int j = 0; j < get_cols(matrix3); j++) {
+                for (int k = 0; k < WIDTH; k++) printf(" ");
+            }
+        }   
+        printf("\n");
+    }
+}
+
+void print_matrix_transition(Matrix* matrix1, Matrix* matrix2) {
+    if (!matrix1 || !matrix2) return;
+    
+    const Element *elem;
+    int fl = max(get_rows(matrix1), get_rows(matrix2)) / 2;
+    
+    for (int i = 0; i < max(get_rows(matrix1), get_rows(matrix2)); i++) {
+        if (i < get_rows(matrix1)) {
+            printf("│ ");
+            for (int j = 0; j < get_cols(matrix1); j++) {
+                if (j != 0) printf(" ");
+                int index1 = i * get_cols(matrix1) + j;
+                elem = get_element_by_index(get_array(matrix1), index1);
+                if (elem) {
+                    char* str = print(elem);
+                    if (str) { printf("%s", str); free(str); }
+                }
+            } 
+            printf("│");
+        } else {
+            for (int j = 0; j < get_cols(matrix1); j++) {
+                for (int k = 0; k < WIDTH; k++) printf(" ");
+            }
+        }   
+        
+        printf("\t");
+        if (i == fl) printf("%s", "->");
+        printf("\t ");
+
+        if (i < get_rows(matrix2)) {
+            printf("│ ");
+            for (int j = 0; j < get_cols(matrix2); j++) {
+                if (j != 0) printf(" ");
+                int index2 = i * get_cols(matrix2) + j;
+                elem = get_element_by_index(get_array(matrix2), index2);
+                if (elem) {
+                    char* str = print(elem);
+                    if (str) { printf("%s", str); free(str); }
+                }
+            } 
+            printf("│");
+        }
+        printf("\n");
+    }
 }
 
 int start() {
@@ -345,110 +336,181 @@ int start() {
         printf("1. Сложение матриц (A + B)\n");
         printf("2. Умножение матриц (A x B)\n");
         printf("3. Транспонирование матрицы (A^T)\n");
-        printf("4. Прибавление линейной комбинации строк\n");
+        printf("4. Линейная комбинация строк\n");
         printf("0. Выход\n");
         printf("----------------------------------------\n");
         printf("Ваш выбор: ");
         
         if (scanf("%d", &choice) != 1) {
             printf("Ошибка ввода! Попробуйте снова.\n");
-            while(getchar() != '\n'); 
+            clear_buffer();
             continue;
         }
+        clear_buffer();
 
         switch (choice) {
             case 1: {
                 printf("\n--- СЛОЖЕНИЕ МАТРИЦ ---\n");
-                // printf("Введите первую матрицу:\n");
+                
                 Matrix* m1 = fill_matrix();
-                // printf("Введите вторую матрицу:\n");
-                Matrix* m2 = fill_matrix_w_predicted_value(get_array_type(get_array(m1)));
-
-                Matrix* res = sum_matrix(m1, m2);
-
-                if (res == NULL) {
-                    printf("Ошибка сложения");
+                if (m1 == NULL) {
+                    printf("Возврат в меню.\n");
                     break;
                 }
                 
-                print_matrix_equality(m1, m2, res, "+");
+                // Исправлено: передаём размеры первой матрицы
+                Matrix* m2 = fill_matrix_w_predicted_value(
+                    get_array_type(get_array(m1)),
+                    get_rows(m1),
+                    get_cols(m1)
+                );
+                if (m2 == NULL) {
+                    printf("Возврат в меню.\n");
+                    destroy_matrix(m1);
+                    break;
+                }
+
+                Matrix* res = sum_matrix(m1, m2);
+                if (res == NULL) {
+                    printf("Ошибка сложения: матрицы должны иметь одинаковые размеры и тип.\n");
+                } else {
+                    print_matrix_equality(m1, m2, res, "+");
+                    destroy_matrix(res);
+                }
                 
-                // free_matrix(m1); free_matrix(m2); free_matrix(res);
+                destroy_matrix(m1);
+                destroy_matrix(m2);
                 break;
             }
+            
             case 2: {
                 printf("\n--- УМНОЖЕНИЕ МАТРИЦ ---\n");
-                // printf("Введите первую матрицу:\n");
+                
                 Matrix* m1 = fill_matrix();
-                // printf("Введите вторую матрицу:\n");
-                Matrix* m2 = fill_matrix_w_predicted_value(get_array_type(get_array(m1)));
+                if (m1 == NULL) {
+                    break;
+                }
                 
+                // Для умножения: cols(m1) должны равняться rows(m2)
+                // Но fill_matrix_w_predicted_value проверяет полное совпадение размеров
+                // Поэтому для умножения лучше оставить обычный fill_matrix
+                Matrix* m2 = fill_matrix();
+                if (m2 == NULL) {
+                    destroy_matrix(m1);
+                    break;
+                }
+
                 Matrix* res = mult_matrix(m1, m2);
-                print_matrix_equality(m1, m2, res, "x");
+                if (res == NULL) {
+                    printf("Ошибка умножения: столбцы первой должны совпадать со строками второй.\n");
+                } else {
+                    print_matrix_equality(m1, m2, res, "x");
+                    destroy_matrix(res);
+                }
                 
-                // free_matrix(m1); free_matrix(m2); free_matrix(res);
+                destroy_matrix(m1);
+                destroy_matrix(m2);
                 break;
             }
+            
             case 3: {
                 printf("\n--- ТРАНСПОНИРОВАНИЕ ---\n");
-                // printf("Введите матрицу:\n");
+                
                 Matrix* m1 = fill_matrix();
+                if (m1 == NULL) {
+                    break;
+                }
                 
                 Matrix* res = transponate_matrix(m1);
-                print_matrix_transition(m1, res);
+                if (res == NULL) {
+                    printf("Ошибка транспонирования.\n");
+                } else {
+                    print_matrix_transition(m1, res);
+                    destroy_matrix(res);
+                }
                 
-                // free_matrix(m1); free_matrix(res);
+                destroy_matrix(m1);
                 break;
             }
+            
             case 4: {
                 printf("\n--- ЛИНЕЙНАЯ КОМБИНАЦИЯ СТРОК ---\n");
-                // printf("Введите матрицу:\n");
+                
                 Matrix* m1 = fill_matrix();
+                if (m1 == NULL) {
+                    break;
+                }
                 
                 int from_row, to_row;
                 
-                
-                printf("Введите номер строки, ИЗ которой берем (от 1 до %d): ", get_rows(m1));
-                scanf("%d", &from_row);
-                
-                printf("Введите номер строки, К которой прибавляем (от 1 до %d): ", get_rows(m1));
-                scanf("%d", &to_row);
-
-
-                Element* elem;
-                printf("Введите коэффициент (число): ");
-                if (get_array_type(get_array(m1)) == TYPE_INT) {
-                    int coeff_val;
-                    scanf("%d", &coeff_val);
-                    elem = create_int_elem();
-                    set_int_number(elem, coeff_val);
-                }
-                else if (get_array_type(get_array(m1)) == TYPE_FLOAT) {
-                    float coeff_val;
-                    scanf("%f", &coeff_val);
-                    elem = create_float_elem();
-                    set_float_number(elem, coeff_val);
-                }
-                else {
+                if (!read_int("Введите номер строки, ИЗ которой берем (от 1 до ...): ", &from_row) ||
+                    from_row < 1 || from_row > get_rows(m1)) {
+                    printf("Неверный номер строки.\n");
+                    destroy_matrix(m1);
                     break;
                 }
                 
+                if (!read_int("Введите номер строки, К которой прибавляем (от 1 до ...): ", &to_row) ||
+                    to_row < 1 || to_row > get_rows(m1)) {
+                    printf("Неверный номер строки.\n");
+                    destroy_matrix(m1);
+                    break;
+                }
+
+                Element* coeff = NULL;
+                if (get_array_type(get_array(m1)) == TYPE_INT) {
+                    int coeff_val;
+                    if (!read_int("Введите коэффициент (целое число): ", &coeff_val)) {
+                        printf("Ошибка ввода коэффициента.\n");
+                        destroy_matrix(m1);
+                        break;
+                    }
+                    coeff = create_int_elem();
+                    if (coeff) set_int_number(coeff, coeff_val);
+                }
+                else if (get_array_type(get_array(m1)) == TYPE_FLOAT) {
+                    float coeff_val;
+                    printf("Введите коэффициент (вещественное число): ");
+                    if (scanf("%f", &coeff_val) != 1) {
+                        printf("Ошибка ввода коэффициента.\n");
+                        clear_buffer();
+                        destroy_matrix(m1);
+                        break;
+                    }
+                    clear_buffer();
+                    coeff = create_float_elem();
+                    if (coeff) set_float_number(coeff, coeff_val);
+                }
                 
-                Matrix* res = matrix_linear_combination(m1, from_row, to_row, elem);
-                print_matrix_transition(m1, res);
+                if (coeff == NULL) {
+                    printf("Ошибка создания коэффициента.\n");
+                    destroy_matrix(m1);
+                    break;
+                }
                 
-                // free_matrix(m1); free_matrix(res);
+                Matrix* res = matrix_linear_combination(m1, from_row, to_row, coeff);
+                if (res == NULL) {
+                    printf("Ошибка вычисления линейной комбинации.\n");
+                } else {
+                    print_matrix_transition(m1, res);
+                    destroy_matrix(res);
+                }
+                
+                destroy_elem(coeff);
+                destroy_matrix(m1);
                 break;
             }
+            
             case 0:
                 printf("Выход из программы...\n");
                 break;
+                
             default:
                 printf("Неверный номер пункта меню. Попробуйте снова.\n");
+                break;
         }
         
     } while (choice != 0);
 
     return 0;
 }
-
