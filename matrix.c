@@ -211,9 +211,15 @@ Matrix* mult_matrix(Matrix* matrix1, Matrix* matrix2) {
 }
 
 Matrix* transponate_matrix(Matrix* matrix) {
-    Array* array = create_array_size_element(get_rows(matrix) * get_cols(matrix));
+    if (matrix == NULL) return NULL;
 
-    for (int i = 0; i < get_rows(matrix) * get_cols(matrix); i++) {
+    int rows = get_rows(matrix);
+    int cols = get_cols(matrix);
+    
+    Array* array = create_array_size_element(rows * cols);
+    if (!array) return NULL;
+
+    for (int i = 0; i < rows * cols; i++) {
         if (get_array_type(get_array(matrix)) == TYPE_INT) {
             set_element_by_index(array, i, create("int"));
         }
@@ -221,23 +227,35 @@ Matrix* transponate_matrix(Matrix* matrix) {
             set_element_by_index(array, i, create("float"));
         }
         else {
+            destroy_array(array);
             return NULL;
         }
     }
     
-    Matrix* new_matrix = create_matrix(array, get_cols(matrix), get_rows(matrix));
+    Matrix* new_matrix = create_matrix(array, cols, rows);
+    if (!new_matrix) {
+        destroy_array(array);
+        return NULL;
+    }
 
-    for (int i = 0; i < get_rows(matrix); i++) {
-        for (int j = 0; j < get_cols(matrix); j++) {
-            int index = i * get_cols(matrix) + j;
-            int new_index = j * get_rows(matrix) + i;
-            set_element_by_index(get_array(new_matrix), new_index, get_element_by_index(get_array(matrix), index));
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            int src_index = i * cols + j;
+            int dst_index = j * rows + i;
+            
+            Element* src = get_element_by_index(get_array(matrix), src_index);
+            Element* dst = get_element_by_index(get_array(new_matrix), dst_index);
+            
+            if (src->type == TYPE_INT) {
+                *(int*)dst->number = *(int*)src->number;
+            } else {
+                *(float*)dst->number = *(float*)src->number;
+            }
         }
     }
 
     return new_matrix;
 }
-
 
 Matrix* matrix_linear_combination(Matrix* matrix, int from_row, int to_row, Element* coeff) {
     Array* array = create_array_size_element(get_cols(matrix) * get_cols(matrix));
