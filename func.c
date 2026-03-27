@@ -21,6 +21,7 @@ void clear_buffer(void) {
 }
 
 int read_int(const char* input, int* output) {
+    if (input == NULL || output == NULL) return 0;
     printf("%s", input);
     if (scanf("%d", output) != 1) {
         clear_buffer();
@@ -84,7 +85,6 @@ const char* format_matrix(int rows, int cols, int type, const char* matrix_data)
     return (const char*)result;
 }
 
-// Исправленная версия: теперь принимает ожидаемые размеры
 Matrix* fill_matrix_w_predicted_value(ElementType type, int expected_rows, int expected_cols) {
     int row, col;
     
@@ -93,7 +93,6 @@ Matrix* fill_matrix_w_predicted_value(ElementType type, int expected_rows, int e
     printf("========================================\n");
     printf("Ожидаемый размер: %d x %d\n", expected_rows, expected_cols);
 
-    // Читаем размеры, но проверяем на совпадение
     if (!read_int("Количество строк: ", &row) || row <= 0) {
         printf("Ошибка: некорректное количество строк.\n");
         return NULL;
@@ -104,7 +103,6 @@ Matrix* fill_matrix_w_predicted_value(ElementType type, int expected_rows, int e
         return NULL;
     }
 
-    // Проверка размеров
     if (row != expected_rows || col != expected_cols) {
         printf("Ошибка: размеры матрицы должны быть %d x %d.\n", expected_rows, expected_cols);
         return NULL;
@@ -358,7 +356,6 @@ int start() {
                     break;
                 }
                 
-                // Исправлено: передаём размеры первой матрицы
                 Matrix* m2 = fill_matrix_w_predicted_value(
                     get_array_type(get_array(m1)),
                     get_rows(m1),
@@ -391,9 +388,6 @@ int start() {
                     break;
                 }
                 
-                // Для умножения: cols(m1) должны равняться rows(m2)
-                // Но fill_matrix_w_predicted_value проверяет полное совпадение размеров
-                // Поэтому для умножения лучше оставить обычный fill_matrix
                 Matrix* m2 = fill_matrix();
                 if (m2 == NULL) {
                     destroy_matrix(m1);

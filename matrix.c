@@ -16,17 +16,14 @@ const TypeMatrix MyMatrix = {
 };
 
 Matrix* create_matrix(Array* array, int row, int col) {
+    if (array == NULL || row <= 0 || col <= 0) return NULL;
     Matrix *matrix = malloc(sizeof(Matrix));
+    if (matrix == NULL) return NULL;
     matrix->col = col;
     matrix->row = row;
     matrix->array = array;
-
     return matrix;
 }
-
-// int destroy_matrix(Matrix* matrix) {
-//     return 1;
-// }
 
 int destroy_matrix(Matrix* matrix) {
     if (matrix == NULL) {
@@ -42,11 +39,13 @@ int destroy_matrix(Matrix* matrix) {
     return 1;
 }
 
-
 int get_rows(Matrix* matrix) {
+    if (matrix == NULL) return 0;
     return matrix->row;
 }
+
 int get_cols(Matrix* matrix) {
+    if (matrix == NULL) return 0;
     return matrix->col;
 }
 
@@ -84,6 +83,7 @@ char* print_matrix(Matrix* matrix) {
 }
 
 Matrix* fill_matrix_from_string(const char* input) {
+    if (input == NULL) return NULL;
     int row, col, type;
     int offset = 0, consumed = 0;
     char* endptr;
@@ -142,11 +142,13 @@ Matrix* fill_matrix_from_string(const char* input) {
 }
 
 Matrix* sum_matrix(Matrix* matrix1, Matrix* matrix2) {
+    if (matrix1 == NULL || matrix2 == NULL) return NULL;
     if ((get_cols(matrix1) != get_cols(matrix2)) || (get_rows(matrix1) != get_rows(matrix2)) || (get_array_type(get_array(matrix1)) != get_array_type(get_array(matrix2)))) {
         return NULL;
     }
 
     Array* array = create_array_size_element(get_rows(matrix1) * get_cols(matrix1));
+    if (!array) return NULL;
 
     for (int i = 0; i < get_rows(matrix1) * get_cols(matrix1); i++) {
         if (get_array_type(get_array(matrix1)) == TYPE_INT) {
@@ -156,28 +158,34 @@ Matrix* sum_matrix(Matrix* matrix1, Matrix* matrix2) {
             set_element_by_index(array, i, create_null("float"));
         }
         else {
+            destroy_array(array);
             return NULL;
         }
     }
 
     Matrix* matrix = create_matrix(array, get_rows(matrix1), get_cols(matrix1));
+    if (!matrix) {
+        destroy_array(array);
+        return NULL;
+    }
 
     for (int i = 0; i < get_rows(matrix1); i++) {
         for (int j = 0; j < get_cols(matrix1); j++) {
-            int index = i * get_cols(matrix) + j;
+            int index = i * get_cols(matrix1) + j;
             set_element_by_index(get_array(matrix), index, sum(get_element_by_index(get_array(matrix1), index), get_element_by_index(get_array(matrix2), index)));
         }
     }
     return matrix;
 }
 
-
 Matrix* mult_matrix(Matrix* matrix1, Matrix* matrix2) {
+    if (matrix1 == NULL || matrix2 == NULL) return NULL;
     if (get_cols(matrix1) != get_rows(matrix2) || (get_array_type(get_array(matrix1)) != get_array_type(get_array(matrix2)))) {
         return NULL;
     }
 
     Array* array = create_array_size_element(get_rows(matrix1) * get_cols(matrix2));
+    if (!array) return NULL;
 
     for (int i = 0; i < get_rows(matrix1) * get_cols(matrix2); i++) {
         if (get_array_type(get_array(matrix1)) == TYPE_INT) {
@@ -187,22 +195,33 @@ Matrix* mult_matrix(Matrix* matrix1, Matrix* matrix2) {
             set_element_by_index(array, i, create_null("float"));
         }
         else {
+            destroy_array(array);
             return NULL;
         }
     }
     
     Matrix* matrix = create_matrix(array, get_rows(matrix1), get_cols(matrix2));
+    if (!matrix) {
+        destroy_array(array);
+        return NULL;
+    }
 
     for (int i = 0; i < get_rows(matrix1); i++) {
         for (int j = 0; j < get_cols(matrix2); j++) {
-            int index = i * get_cols(matrix) + j;
+            int index = i * get_cols(matrix2) + j;
             for (int k = 0; k < get_cols(matrix1); k++) {
                 int index_left = i * get_cols(matrix1) + k;
                 int index_right = k * get_cols(matrix2) + j;
 
-                Element elem = *multiply(get_element_by_index(get_array(matrix1), index_left), get_element_by_index(get_array(matrix2), index_right));
-                Element old_elem = *get_element_by_index(get_array(matrix), index);
-                set_element_by_index(get_array(matrix), index, sum(&elem, &old_elem));
+                Element* prod = multiply(get_element_by_index(get_array(matrix1), index_left), get_element_by_index(get_array(matrix2), index_right));
+                if (prod == NULL) continue;
+                
+                Element* old = get_element_by_index(get_array(matrix), index);
+                Element* res = sum(old, prod);
+                if (res) {
+                    set_element_by_index(get_array(matrix), index, res);
+                }
+                destroy_elem(prod);
             } 
         }
     }
@@ -246,10 +265,12 @@ Matrix* transponate_matrix(Matrix* matrix) {
             Element* src = get_element_by_index(get_array(matrix), src_index);
             Element* dst = get_element_by_index(get_array(new_matrix), dst_index);
             
-            if (src->type == TYPE_INT) {
-                *(int*)dst->number = *(int*)src->number;
-            } else {
-                *(float*)dst->number = *(float*)src->number;
+            if (src && dst) {
+                if (src->type == TYPE_INT) {
+                    *(int*)dst->number = *(int*)src->number;
+                } else {
+                    *(float*)dst->number = *(float*)src->number;
+                }
             }
         }
     }
@@ -258,7 +279,10 @@ Matrix* transponate_matrix(Matrix* matrix) {
 }
 
 Matrix* matrix_linear_combination(Matrix* matrix, int from_row, int to_row, Element* coeff) {
-    Array* array = create_array_size_element(get_cols(matrix) * get_cols(matrix));
+    if (matrix == NULL || coeff == NULL) return NULL;
+    
+    Array* array = create_array_size_element(get_cols(matrix) * get_rows(matrix));
+    if (!array) return NULL;
 
     for (int i = 0; i < get_cols(matrix) * get_rows(matrix); i++) {
         if (get_array_type(get_array(matrix)) == TYPE_INT) {
@@ -268,32 +292,57 @@ Matrix* matrix_linear_combination(Matrix* matrix, int from_row, int to_row, Elem
             set_element_by_index(array, i, create("float"));
         }
         else {
+            destroy_array(array);
             return NULL;
         }
     }
     
     Matrix* new_matrix = create_matrix(array, get_rows(matrix), get_cols(matrix));
+    if (!new_matrix) {
+        destroy_array(array);
+        return NULL;
+    }
 
-    to_row--, from_row--;
+    to_row--; from_row--;
 
-    
     for (int i = 0; i < get_rows(matrix); i++) {
         for (int j = 0; j < get_cols(matrix); j++) {
             int index = i * get_cols(matrix) + j;
-            set_element_by_index(get_array(new_matrix), index, get_element_by_index(get_array(matrix), index));
+            Element* src = get_element_by_index(get_array(matrix), index);
+            if (src) {
+                Element* dst = get_element_by_index(get_array(new_matrix), index);
+                if (dst && src->type == TYPE_INT) {
+                    *(int*)dst->number = *(int*)src->number;
+                } else if (dst) {
+                    *(float*)dst->number = *(float*)src->number;
+                }
+            }
         }
     }
 
-    int index_to = to_row * get_rows(new_matrix), index_from = from_row * get_rows(new_matrix);
+    int index_to = to_row * get_cols(new_matrix);
+    int index_from = from_row * get_cols(new_matrix);
+    
     for (int j = 0; j < get_cols(new_matrix); j++, index_to++, index_from++) {
-        Element from_elem = *multiply(coeff, get_element_by_index(get_array(new_matrix), index_from));
-        Element to_elem = *get_element_by_index(get_array(new_matrix), index_to);
-        set_element_by_index(get_array(new_matrix), index_to, sum(&from_elem, &to_elem));
+        Element* from_elem = get_element_by_index(get_array(new_matrix), index_from);
+        Element* to_elem = get_element_by_index(get_array(new_matrix), index_to);
+        
+        if (from_elem && to_elem) {
+            Element* scaled = multiply(coeff, from_elem);
+            if (scaled) {
+                Element* result = sum(to_elem, scaled);
+                if (result) {
+                    set_element_by_index(get_array(new_matrix), index_to, result);
+                }
+                destroy_elem(scaled);
+            }
+        }
     }
     return new_matrix;
 }
 
 Array* get_array(Matrix* matrix) {
+    if (matrix == NULL) return NULL;
     return matrix->array;
 }
 
