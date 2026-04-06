@@ -1,27 +1,20 @@
-# === Компиляторы (MinGW) ===
 CC = gcc
 CXX = g++
 
-# === Флаги ===
 CFLAGS = -Wall -Wextra -g -I.
 CXXFLAGS = -Wall -Wextra -g -std=c++17 -I.
 
-# === Пути к Google Test ===
 GTEST_INC = -IC:/libs/googletest/install/include
-# Добавлен -pthread (обязательно для gtest) и -lm (математика)
 GTEST_LIB = -LC:/libs/googletest/install/lib -lgtest -lgtest_main -pthread -lm
 
-# === Основная программа ===
 TARGET = main.exe
 SRCS = main.c func.c array.c element.c matrix.c
 OBJS = main.o func.o array.o element.o matrix.o
 
-# === Тесты ===
 TEST_DIR = build_test
 TEST_EXE = $(TEST_DIR)/run_tests.exe
 TEST_OBJS = $(TEST_DIR)/test_func.o $(TEST_DIR)/func.o $(TEST_DIR)/array.o $(TEST_DIR)/element.o $(TEST_DIR)/matrix.o
 
-# === Цели ===
 .PHONY: all main test clean rebuild help
 
 all: help
@@ -33,7 +26,6 @@ help:
 	@echo "  make clean  - очистить всё"
 	@echo "  make rebuild - полная пересборка"
 
-# === ОСНОВНАЯ ПРОГРАММА ===
 main: $(TARGET)
 
 $(TARGET): $(OBJS)
@@ -54,7 +46,6 @@ element.o: element.c element.h
 matrix.o: matrix.c matrix.h
 	$(CC) $(CFLAGS) -c matrix.c -o matrix.o
 
-# === ТЕСТЫ ===
 test: $(TEST_EXE)
 	@echo "=== Запуск тестов ==="
 	$(TEST_EXE)
@@ -80,7 +71,6 @@ $(TEST_DIR)/matrix.o: matrix.c | $(TEST_DIR)
 $(TEST_DIR):
 	mkdir -p $(TEST_DIR)
 
-# === ОЧИСТКА ===
 clean:
 	@echo "=== Очистка ==="
 	rm -f *.o *.exe

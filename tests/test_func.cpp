@@ -14,9 +14,7 @@ extern "C" {
 static int global_max(int a, int b) { return max(a, b); }
 static int global_min(int a, int b) { return min(a, b); }
 
-// ============================================================================
-//                           ELEMENT TESTS (INT)
-// ============================================================================
+//ELEMENT TEST INT
 
 TEST(ElementTest, CreateInt) {
     Element* elem = create((char*)"int");
@@ -312,9 +310,7 @@ TEST(ElementTest, CreateInt_DestroyAlreadyNull) {
     EXPECT_EQ(destroy_elem(nullptr), 0);
 }
 
-// ============================================================================
-//                           ELEMENT TESTS (FLOAT)
-// ============================================================================
+//ELEMENTS TEST FLOAT
 
 TEST(ElementTest, CreateFloat) {
     Element* elem = create((char*)"float");
@@ -470,9 +466,7 @@ TEST(ElementTest, CreateFloat_DestroyNull) {
     EXPECT_EQ(destroy_elem(nullptr), 0);
 }
 
-// ============================================================================
-//                           ELEMENT TESTS (CREATE/INVALID)
-// ============================================================================
+//ELEMENTS TEST CREATE
 
 TEST(ElementTest, CreateEmptyString) {
     Element* elem = create((char*)"");
@@ -508,9 +502,7 @@ TEST(ElementTest, CreateNullElem_Invalid) {
     EXPECT_EQ(elem, nullptr);
 }
 
-// ============================================================================
-//                           ARRAY TESTS (BASIC)
-// ============================================================================
+//ARRAY TESTS GENERAL 
 
 TEST(ArrayTest, CreateArraySize_Zero) {
     Array* arr = create_array_size_element(0);
@@ -555,9 +547,7 @@ TEST(ArrayTest, CreateArraySize_NullCheck) {
     free(arr);
 }
 
-// ============================================================================
-//                           ARRAY TESTS (GET/SET)
-// ============================================================================
+//ARRAY TEST GETTERS SETTERS
 
 TEST(ArrayTest, GetElementByIndex_First) {
     Array* arr = create_array_size_element(5);
@@ -664,9 +654,7 @@ TEST(ArrayTest, SetElementByIndex_NullElem) {
     free(arr);
 }
 
-// ============================================================================
-//                           ARRAY TESTS (TYPE)
-// ============================================================================
+//ARRAY TEST TYPE CHECK
 
 TEST(ArrayTest, GetArrayType_Empty) {
     Array* arr = create_array_size_element(0);
@@ -693,9 +681,7 @@ TEST(ArrayTest, GetArrayType_NullArray) {
     EXPECT_EQ(get_array_type(nullptr), TYPE_NONE);
 }
 
-// ============================================================================
-//                           ARRAY TESTS (DESTROY)
-// ============================================================================
+//ARRAY TEST DESTROY
 
 TEST(ArrayTest, DestroyArray_Null) {
     EXPECT_EQ(destroy_array(nullptr), 0);
@@ -724,9 +710,7 @@ TEST(ArrayTest, DestroyArray_WithFloatElements) {
     EXPECT_EQ(destroy_array(arr), 1);
 }
 
-// ============================================================================
-//                           MATRIX TESTS (CREATE)
-// ============================================================================
+//MATRIX TESTS CREATE
 
 TEST(MatrixTest, CreateMatrix_1x1) {
     Array* arr = create_array_size_element(1);
@@ -787,9 +771,7 @@ TEST(MatrixTest, CreateMatrix_ZeroCols) {
     if (arr) { if (arr->data) free(arr->data); free(arr); }
 }
 
-// ============================================================================
-//                           MATRIX TESTS (GETTERS)
-// ============================================================================
+//MATRIX TESTS GETTERS
 
 TEST(MatrixTest, GetRowsCols_1x1) {
     Array* arr = create_array_size_element(1);
@@ -827,9 +809,7 @@ TEST(MatrixTest, GetArray_NullMatrix) {
     EXPECT_EQ(get_array(nullptr), nullptr);
 }
 
-// ============================================================================
-//                           MATRIX TESTS (PRINT)
-// ============================================================================
+//MATRIX TESTS PRINT
 
 TEST(MatrixTest, PrintMatrix_1x1) {
     Array* arr = create_array_size_element(1);
@@ -888,9 +868,7 @@ TEST(MatrixTest, PrintMatrix_MemoryLeakCheck) {
     destroy_matrix(m);
 }
 
-// ============================================================================
-//                           MATRIX TESTS (SUM)
-// ============================================================================
+//MATRIX TESTS SUM
 
 TEST(MatrixTest, SumMatrix_1x1) {
     Array* a1 = create_array_size_element(1);
@@ -959,9 +937,7 @@ TEST(MatrixTest, SumMatrix_NullSecond) {
     destroy_matrix(m1);
 }
 
-// ============================================================================
-//                           MATRIX TESTS (MULTIPLY)
-// ============================================================================
+//MATRIX TESTS MULTIPLY
 
 TEST(MatrixTest, MultMatrix_2x2_2x2) {
     Array* a1 = create_array_size_element(4);
@@ -1016,9 +992,7 @@ TEST(MatrixTest, MultMatrix_NullSecond) {
     destroy_matrix(m1);
 }
 
-// ============================================================================
-//                           MATRIX TESTS (TRANSPOSE)
-// ============================================================================
+//MATRIX TESTS TRANSPOSE
 
 TEST(MatrixTest, TransposeMatrix_1x1) {
     Array* arr = create_array_size_element(1);
@@ -1083,9 +1057,7 @@ TEST(MatrixTest, TransposeMatrix_Null) {
     EXPECT_EQ(transponate_matrix(nullptr), nullptr);
 }
 
-// ============================================================================
-//                           MATRIX TESTS (STRING PARSE)
-// ============================================================================
+//MATRIX TESTS STRING PARSING
 
 TEST(MatrixTest, StringToMatrix_1x1_Int) {
     const char* input = "1 1 1\n42";
@@ -1153,9 +1125,7 @@ TEST(MatrixTest, StringToMatrix_EmptyInput) {
     EXPECT_EQ(m, nullptr);
 }
 
-// ============================================================================
-//                           MATRIX TESTS (DESTROY)
-// ============================================================================
+//MATRIX TESTS DESTROY
 
 TEST(MatrixTest, DestroyMatrix_Null) {
     EXPECT_EQ(destroy_matrix(nullptr), 0);
@@ -1184,9 +1154,7 @@ TEST(MatrixTest, DestroyMatrix_MultipleNoLeak) {
     }
 }
 
-// ============================================================================
-//                           HELPER FUNCTION TESTS
-// ============================================================================
+//HELPER FUNCTION TESTS
 
 TEST(HelperTest, Max_Equal) {
     EXPECT_EQ(global_max(5, 5), 5);
@@ -1237,9 +1205,7 @@ TEST(HelperTest, ClearBuffer_Exists) {
     EXPECT_TRUE(clear_buffer != nullptr);
 }
 
-// ============================================================================
-//                           INTEGRATION TESTS
-// ============================================================================
+//INTEGRATION TESTS
 
 TEST(IntegrationTest, CreatePrintDestroy) {
     Array* arr = create_array_size_element(4);
@@ -1310,9 +1276,7 @@ TEST(IntegrationTest, StringParseThenOperate) {
     if (m2) destroy_matrix(m2);
 }
 
-// ============================================================================
-//                           EDGE CASE TESTS
-// ============================================================================
+//EDGE CASE TESTS
 
 TEST(EdgeCaseTest, Element_OperationsWithZero) {
     Element* a = create((char*)"int");
@@ -1357,9 +1321,7 @@ TEST(EdgeCaseTest, Matrix_NegativeValues) {
     if (m) destroy_matrix(m);
 }
 
-// ============================================================================
-//                           MAIN
-// ============================================================================
+//main
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
