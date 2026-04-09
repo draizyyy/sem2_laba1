@@ -3,14 +3,7 @@
 
 struct TypeElement;
 
-typedef enum {
-    TYPE_INT,
-    TYPE_FLOAT,
-    TYPE_NONE
-} ElementType;
-
 typedef struct {
-    ElementType type;
     unsigned int size;
     void* number;
     const struct TypeElement* type_element;
@@ -27,8 +20,10 @@ typedef struct TypeElement {
     int (*destroy)(Element* elem);
     void* (*get_number)(Element* elem);
     int (*set_number)(Element* elem, void* number);
-    ElementType (*get_elem_type)(Element* elem);
 } TypeElement;
+
+extern const TypeElement IntType;
+extern const TypeElement FloatType;
 
 int scan_int(const Element* element, const char* str);
 int scan_float(const Element* element, const char* str);
@@ -59,7 +54,5 @@ Element* sum(const Element* left, const Element* right);
 Element* multiply(const Element* left, const Element* right);
 Element* create(char* type);
 Element* create_null(char* type);
-ElementType get_elem_type(Element* elem);
-
 
 #endif

@@ -26,6 +26,6 @@ int add_element_to_array(Array* array, Element* elem);
 Element* get_element_by_index(Array* array, int index);
 int set_element_by_index(Array* array, int index, Element* elem);
 int destroy_array(Array* array);
-ElementType get_array_type(Array* array);
+const TypeElement* get_array_type(Array* array);
 
 #endif

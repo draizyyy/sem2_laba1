@@ -21,7 +21,7 @@ TEST(ElementTest, CreateInt) {
     EXPECT_NE(elem, nullptr);
     EXPECT_NE(elem->number, nullptr);
     EXPECT_EQ(elem->size, sizeof(int));
-    EXPECT_EQ(elem->type, TYPE_INT);
+    EXPECT_EQ(elem->type_element, &IntType);
     destroy_elem(elem);
 }
 
@@ -317,7 +317,7 @@ TEST(ElementTest, CreateFloat) {
     EXPECT_NE(elem, nullptr);
     EXPECT_NE(elem->number, nullptr);
     EXPECT_EQ(elem->size, sizeof(float));
-    EXPECT_EQ(elem->type, TYPE_FLOAT);
+    EXPECT_EQ(elem->type_element, &FloatType);
     destroy_elem(elem);
 }
 
@@ -658,7 +658,7 @@ TEST(ArrayTest, SetElementByIndex_NullElem) {
 
 TEST(ArrayTest, GetArrayType_Empty) {
     Array* arr = create_array_size_element(0);
-    EXPECT_EQ(get_array_type(arr), TYPE_NONE);
+    EXPECT_EQ(get_array_type(arr), nullptr);
     if (arr->data) free(arr->data);
     free(arr);
 }
@@ -669,7 +669,7 @@ TEST(ArrayTest, GetArrayType_Float) {
         arr->data[i].number = NULL;
         set_element_by_index(arr, i, create((char*)"float"));
     }
-    EXPECT_EQ(get_array_type(arr), TYPE_FLOAT);
+    EXPECT_EQ(get_array_type(arr), &FloatType);
     for (unsigned i = 0; i < arr->size; i++) {
         if (arr->data[i].number) free(arr->data[i].number);
     }
@@ -678,7 +678,7 @@ TEST(ArrayTest, GetArrayType_Float) {
 }
 
 TEST(ArrayTest, GetArrayType_NullArray) {
-    EXPECT_EQ(get_array_type(nullptr), TYPE_NONE);
+    EXPECT_EQ(get_array_type(nullptr), nullptr);
 }
 
 //ARRAY TEST DESTROY
@@ -798,7 +798,7 @@ TEST(MatrixTest, GetRowsCols_NullMatrix) {
 
 TEST(MatrixTest, GetArray_ReturnsValid) {
     Array* arr = create_array_size_element(4);
-    for (int i = 0; i < 4; i++) set_element_by_index(arr, i, create_null((char*)"int"));
+    for (unsigned int i = 0; i < 4; i++) set_element_by_index(arr, i, create_null((char*)"int"));
     Matrix* m = create_matrix(arr, 2, 2);
     EXPECT_NE(get_array(m), nullptr);
     EXPECT_EQ(get_array(m)->size, 4);
@@ -1183,7 +1183,7 @@ TEST(HelperTest, Min_Large) {
 }
 
 TEST(HelperTest, FormatMatrix_Basic) {
-    const char* result = format_matrix(2, 3, 1, "1 2 3 4 5 6");
+    const char* result = format_matrix(2, 3, &IntType, "1 2 3 4 5 6");
     EXPECT_NE(result, nullptr);
     EXPECT_TRUE(strstr(result, "2 3 1") != nullptr);
     EXPECT_TRUE(strstr(result, "1 2 3 4 5 6") != nullptr);
@@ -1191,12 +1191,12 @@ TEST(HelperTest, FormatMatrix_Basic) {
 }
 
 TEST(HelperTest, FormatMatrix_NullData) {
-    const char* result = format_matrix(1, 1, 1, nullptr);
+    const char* result = format_matrix(1, 1, &IntType, nullptr);
     EXPECT_EQ(result, nullptr);
 }
 
 TEST(HelperTest, FormatMatrix_ZeroSize) {
-    const char* result = format_matrix(0, 0, 1, "");
+    const char* result = format_matrix(0, 0, &IntType, "");
     EXPECT_NE(result, nullptr);
     free((void*)result);
 }
