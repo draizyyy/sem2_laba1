@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <errno.h>
 #include "array.h"
 #include "matrix.h"
 
@@ -22,7 +23,7 @@ void clear_buffer(void) {
     }
 }
 
-int read_int(const char* input, int* output) {
+int read_int( char* input, int* output) {
     if (input == NULL || output == NULL) {
         return 0;
     }
@@ -62,14 +63,15 @@ char* get_string_from_user() {
             strcpy(buffer + total_len, line);
             total_len += line_len;
         } else {
-            fprintf(stderr, "Превышен лимит буфера\n");
+            errno = ENOBUFS;
+            perror("get_string_from_user (buffer overflow)");
             break;
         }
     }
     return (total_len > 0) ? buffer : NULL;
 }
 
-const char* format_matrix(int rows, int cols, const TypeElement* type, const char* matrix_data) {
+ char* format_matrix(int rows, int cols,  TypeElement* type,  char* matrix_data) {
     if (matrix_data == NULL) {
         return NULL;
     }
@@ -82,10 +84,10 @@ const char* format_matrix(int rows, int cols, const TypeElement* type, const cha
     }
     int type_id = (type == &IntType) ? 1 : 2;
     sprintf(result, "%d %d %d\n%s", rows, cols, type_id, matrix_data);
-    return (const char*)result;
+    return ( char*)result;
 }
 
-Matrix* fill_matrix_w_predicted_value(const TypeElement* type, int expected_rows, int expected_cols) {
+Matrix* fill_matrix_w_predicted_value( TypeElement* type, int expected_rows, int expected_cols) {
     int row, col;
     printf("\n========================================\n");
     printf("         ВВОД НОВОЙ МАТРИЦЫ             \n");
@@ -93,36 +95,43 @@ Matrix* fill_matrix_w_predicted_value(const TypeElement* type, int expected_rows
     printf("Ожидаемый размер: %d x %d\n", expected_rows, expected_cols);
 
     if (!read_int("Количество строк: ", &row) || row <= 0) {
-        printf("Ошибка: некорректное количество строк.\n");
+        errno = EINVAL;
+        perror("fill_matrix_w_predicted_value (rows)");
         return NULL;
     }
     if (!read_int("Количество столбцов: ", &col) || col <= 0) {
-        printf("Ошибка: некорректное количество столбцов.\n");
+        errno = EINVAL;
+        perror("fill_matrix_w_predicted_value (cols)");
         return NULL;
     }
     if (row != expected_rows || col != expected_cols) {
-        printf("Ошибка: размеры матрицы должны быть %d x %d.\n", expected_rows, expected_cols);
+        errno = EINVAL;
+        perror("fill_matrix_w_predicted_value (size mismatch)");
         return NULL;
     }
     if (type != &IntType && type != &FloatType) {
-        printf("Ошибка: неизвестный тип элементов.\n");
+        errno = EINVAL;
+        perror("fill_matrix_w_predicted_value (type)");
         return NULL;
     }
     printf("========================================\n");
     char* data = get_string_from_user();
     if (data == NULL) {
-        printf("Ошибка ввода данных.\n");
+        errno = EINVAL;
+        perror("fill_matrix_w_predicted_value (data)");
         return NULL;
     }
-    const char* formatted = format_matrix(row, col, type, data);
+     char* formatted = format_matrix(row, col, type, data);
     if (formatted == NULL) {
-        printf("Ошибка форматирования.\n");
+        errno = EINVAL;
+        perror("fill_matrix_w_predicted_value (format)");
         return NULL;
     }
     Matrix* result = string_to_matrix(formatted);
     free((void*)formatted);
     if (result == NULL) {
-        printf("Ошибка парсинга матрицы.\n");
+        errno = EINVAL;
+        perror("fill_matrix_w_predicted_value (parse)");
         return NULL;
     }
     return result;
@@ -134,11 +143,13 @@ Matrix* fill_matrix() {
     printf("         ВВОД НОВОЙ МАТРИЦЫ             \n");
     printf("========================================\n");
     if (!read_int("Количество строк: ", &row) || row <= 0) {
-        printf("Ошибка: некорректное количество строк.\n");
+        errno = EINVAL;
+        perror("fill_matrix (rows)");
         return NULL;
     }
     if (!read_int("Количество столбцов: ", &col) || col <= 0) {
-        printf("Ошибка: некорректное количество столбцов.\n");
+        errno = EINVAL;
+        perror("fill_matrix (cols)");
         return NULL;
     }
     printf("\n----------------------------------------\n");
@@ -147,29 +158,34 @@ Matrix* fill_matrix() {
     printf("  2 — вещественные числа (float)\n");
     printf("----------------------------------------\n");
     if (!read_int("Ваш выбор: ", &type_choice)) {
-        printf("Ошибка ввода типа.\n");
+        errno = EINVAL;
+        perror("fill_matrix (type input)");
         return NULL;
     }
     if (type_choice != 1 && type_choice != 2) {
-        printf("Неверный выбор типа.\n");
+        errno = EINVAL;
+        perror("fill_matrix (type choice)");
         return NULL;
     }
     printf("========================================\n");
     char* data = get_string_from_user();
     if (data == NULL) {
-        printf("Ошибка ввода данных.\n");
+        errno = EINVAL;
+        perror("fill_matrix (data)");
         return NULL;
     }
-    const TypeElement* type = (type_choice == 1) ? &IntType : &FloatType;
-    const char* formatted = format_matrix(row, col, type, data);
+     TypeElement* type = (type_choice == 1) ? &IntType : &FloatType;
+     char* formatted = format_matrix(row, col, type, data);
     if (formatted == NULL) {
-        printf("Ошибка форматирования.\n");
+        errno = EINVAL;
+        perror("fill_matrix (format)");
         return NULL;
     }
     Matrix* result = string_to_matrix(formatted);
     free((void*)formatted);
     if (result == NULL) {
-        printf("Ошибка парсинга матрицы.\n");
+        errno = EINVAL;
+        perror("fill_matrix (parse)");
         return NULL;
     }
     return result;
@@ -179,7 +195,7 @@ void print_matrix_equality(Matrix* matrix1, Matrix* matrix2, Matrix* matrix3, ch
     if (!matrix1 || !matrix2 || !matrix3) {
         return;
     }
-    const Element *elem;
+     Element *elem;
     int fl = min(min(get_rows(matrix1), get_rows(matrix2)), get_rows(matrix3)) / 2;
     for (int i = 0; i < max(max(get_rows(matrix1), get_rows(matrix2)), get_rows(matrix3)); i++) {
         if (i < get_rows(matrix1)) {
@@ -272,7 +288,7 @@ void print_matrix_transition(Matrix* matrix1, Matrix* matrix2) {
     if (!matrix1 || !matrix2) {
         return;
     }
-    const Element *elem;
+     Element *elem;
     int fl = max(get_rows(matrix1), get_rows(matrix2)) / 2;
     for (int i = 0; i < max(get_rows(matrix1), get_rows(matrix2)); i++) {
         if (i < get_rows(matrix1)) {
@@ -340,7 +356,8 @@ int start() {
         printf("----------------------------------------\n");
         printf("Ваш выбор: ");
         if (scanf("%d", &choice) != 1) {
-            printf("Ошибка ввода! Попробуйте снова.\n");
+            errno = EINVAL;
+            perror("start (input)");
             clear_buffer();
             continue;
         }
@@ -365,7 +382,8 @@ int start() {
             }
             Matrix* res = sum_matrix(m1, m2);
             if (res == NULL) {
-                printf("Ошибка сложения: матрицы должны иметь одинаковые размеры и тип.\n");
+                errno = EINVAL;
+                perror("start (sum)");
             } else {
                 print_matrix_equality(m1, m2, res, "+");
                 destroy_matrix(res);
@@ -387,7 +405,8 @@ int start() {
             }
             Matrix* res = mult_matrix(m1, m2);
             if (res == NULL) {
-                printf("Ошибка умножения: столбцы первой должны совпадать со строками второй.\n");
+                errno = EINVAL;
+                perror("start (mult)");
             } else {
                 print_matrix_equality(m1, m2, res, "x");
                 destroy_matrix(res);
@@ -404,7 +423,8 @@ int start() {
             }
             Matrix* res = transponate_matrix(m1);
             if (res == NULL) {
-                printf("Ошибка транспонирования.\n");
+                errno = EINVAL;
+                perror("start (transpose)");
             } else {
                 print_matrix_transition(m1, res);
                 destroy_matrix(res);
@@ -421,22 +441,25 @@ int start() {
             int from_row, to_row;
             if (!read_int("Введите номер строки, ИЗ которой берем (от 1 до ...): ", &from_row) ||
                 from_row < 1 || from_row > get_rows(m1)) {
-                printf("Неверный номер строки.\n");
+                errno = EINVAL;
+                perror("start (row num)");
                 destroy_matrix(m1);
                 break;
             }
             if (!read_int("Введите номер строки, К которой прибавляем (от 1 до ...): ", &to_row) ||
                 to_row < 1 || to_row > get_rows(m1)) {
-                printf("Неверный номер строки.\n");
+                errno = EINVAL;
+                perror("start (row num)");
                 destroy_matrix(m1);
                 break;
             }
             Element* coeff = NULL;
-            const TypeElement* type = get_array_type(get_array(m1));
+             TypeElement* type = get_array_type(get_array(m1));
             if (type == &IntType) {
                 int coeff_val;
                 if (!read_int("Введите коэффициент (целое число): ", &coeff_val)) {
-                    printf("Ошибка ввода коэффициента.\n");
+                    errno = EINVAL;
+                    perror("start (coeff input)");
                     destroy_matrix(m1);
                     break;
                 }
@@ -448,7 +471,8 @@ int start() {
                 float coeff_val;
                 printf("Введите коэффициент (вещественное число): ");
                 if (scanf("%f", &coeff_val) != 1) {
-                    printf("Ошибка ввода коэффициента.\n");
+                    errno = EINVAL;
+                    perror("start (coeff input)");
                     clear_buffer();
                     destroy_matrix(m1);
                     break;
@@ -460,13 +484,15 @@ int start() {
                 }
             }
             if (coeff == NULL) {
-                printf("Ошибка создания коэффициента.\n");
+                errno = EINVAL;
+                perror("start (coeff create)");
                 destroy_matrix(m1);
                 break;
             }
             Matrix* res = matrix_linear_combination(m1, from_row, to_row, coeff);
             if (res == NULL) {
-                printf("Ошибка вычисления линейной комбинации.\n");
+                errno = EINVAL;
+                perror("start (linear comb)");
             } else {
                 print_matrix_transition(m1, res);
                 destroy_matrix(res);
@@ -479,7 +505,8 @@ int start() {
             printf("Выход из программы...\n");
             break;
         default:
-            printf("Неверный номер пункта меню. Попробуйте снова.\n");
+            errno = EINVAL;
+            perror("start (menu choice)");
             break;
         }
     } while (choice != 0);

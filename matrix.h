@@ -10,11 +10,11 @@ struct TypeMatrix;
 typedef struct {
     Array* array;
     int row, col;
-    const struct TypeMatrix* type_matrix;
+     struct TypeMatrix* type_matrix;
 } Matrix;
 
 typedef struct TypeMatrix {
-    Matrix* (*scan)(const char* str);
+    Matrix* (*scan)( char* str);
     char* (*print)(Matrix*);
     Matrix* (*sum)(Matrix* matrix1, Matrix* matrix2);
     Matrix* (*multiply)(Matrix* matrix1, Matrix* matrix2);
@@ -29,7 +29,7 @@ typedef struct TypeMatrix {
 } TypeMatrix;
 
 Matrix* create_matrix(Array* array, int row, int col);
-Matrix* fill_matrix_from_string(const char* input);
+Matrix* fill_matrix_from_string( char* input);
 char* print_matrix(Matrix* matrix);
 Matrix* sum_matrix(Matrix* matrix1, Matrix* matrix2);
 int destroy_matrix(Matrix* matrix);
@@ -39,6 +39,6 @@ Matrix* matrix_linear_combination(Matrix* matrix, int from_row, int to_row, Elem
 int get_rows(Matrix* matrix);
 int get_cols(Matrix* matrix);
 Array* get_array(Matrix* matrix);
-Matrix* string_to_matrix(const char* str);
+Matrix* string_to_matrix( char* str);
 
 #endif

@@ -3,7 +3,7 @@
 #include "array.h"
 #include "element.h"
 
-const TypeArray ElementArray = {
+TypeArray ElementArray = {
     .create = create_array_element,
     .create_size = create_array_size_element,
     .add = add_element_to_array,
@@ -24,7 +24,7 @@ Array* create_array_element() {
     return array;
 }
 
-const TypeElement* get_array_type(Array* array) {
+TypeElement* get_array_type(Array* array) {
     if (array == NULL || array->size == 0 || array->data == NULL) return NULL;
     return array->data[0].type_element;
 }
